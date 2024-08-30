@@ -12,6 +12,8 @@ output:
 ---
 
 ```{r setup, include=FALSE}
+library(readr)
+library(dplyr)
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -22,6 +24,13 @@ Consider this a personal guide to the commands and functions you will learn. In 
 ### How to set the working directory
 
 The command to set a working directory is setwd(). For example, this sets the working directory to a directory called data_journalism_2024_fall inside a directory called jour472 located inside your home directory (the ~ is equivalent of /Users/[youruser] on a Mac).
+
+""WHY is it important to do certain code ASSIGNMENT
+When determining the number of contributions for recipient by hand it can be tedious and inefficient, especially with really large datasets. By using the dplyr's group_by() in R, you can effortlessly group data by recipients and then use summary functions to count the contributions automatically. This approach not only streamlines the process but also enhances data analysis by allowing for quick and organized views of complex datasets.
+
+Besides counting contributions, you can also calculate the total, average, median, and the minimum and maximum amounts for each recipient using functions like sum(), mean(), median(), min(), and max(). These calculations help you understand not just the number of contributions, but also their overall size and spread.
+
+Uploading libraries: Using the read_rds() function to import data ensures that the dataset is loaded correctly from an R-specific file format. This is crucial because it prevents issues that might arise from data type mismatches or formatting errors. Properly loading data with read_rds() allows for accurate analysis and prevents problems that could skew results or lead to incorrect conclusions.
 
 ```{r}
 setwd("~/jour472/data_journalism_2024_fall")
