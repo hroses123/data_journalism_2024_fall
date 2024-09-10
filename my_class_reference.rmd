@@ -30,7 +30,8 @@ Besides counting contributions, you can also calculate the total, average, media
 
 Uploading libraries: Using the read_rds() function to import data ensures that the dataset is loaded correctly from an R-specific file format. This is crucial because it prevents issues that might arise from data type mismatches or formatting errors. Properly loading data with read_rds() gives accurate analysis and prevents problems that could lead to incorrect conclusions.
 
-
+Making dataframes:
+wv_summary <- WV_winred |>
 
 Lab 1: 
 Aggregates

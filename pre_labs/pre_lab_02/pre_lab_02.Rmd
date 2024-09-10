@@ -351,3 +351,4 @@ So the month of June 2022 had the most expenditures by far in this data. We'll b
 Describe the values in the new `month` column - what do you think the data is showing here?
 
 **Answer**
+The month column represents the first day of each month and organizes total_amount monthly. The  increase in spending in June 2022 likely reflects changes in campaigns where political campaigns picked up the pace in campaigning because the election was approaching. 

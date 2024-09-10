@@ -115,25 +115,25 @@ The only newsworthy nugget that sticks out to me is how much higher the Trump Na
 WV_winred |>
   group_by(memo_text) |>
   summarise(
-    aggregate_amount = n(),
+    count_contribs = n(),
     total_amount = sum(amount),
     mean_amount = mean(amount),
     median_amount = median(amount),
     min_amount = min(amount),
     max_amount = max(amount)
   ) |>
-  arrange(desc(aggregate_amount))
+  arrange(desc(count_contribs))
 ```
 ```{r}
-'wv_summary' <- WV_winred |>
+wv_summary <- WV_winred |>
       group_by(memo_text) |>
   summarise(
-    aggregate_amount = n(),
+    count_contribs = n(),
     total_amount = sum(amount),
     mean_amount = mean(amount),
     median_amount = median(amount),
     min_amount = min(amount),
     max_amount = max(amount)
   ) |>
-  arrange(desc(aggregate_amount))
+  arrange(desc(count_contribs))
 ```
