@@ -1,0 +1,139 @@
+---
+title: "lab_01"
+author: "Derek Willis"
+date: "2024-08-01"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# Turn off scientific notation
+options(scipen=999)
+```
+
+## About this lab
+
+To complete this lab, you need to: \* run existing code as directed (look for **Task**). \* modify existing code as directed (look for **Task**). \* write code in empty codeblocks provided to answer questions included (look for **Q**). \* write out the answer in the form of a complete sentence in the space given (look for **A**). When you are finished, commit changes and push to your personal GitHub repo, then submit the URL to this document on ELMS.
+
+Remember to add any new verbs or concepts to your reference notebook!
+
+## Load libraries and establish settings
+
+**Task** Run the codeblock below to load the Tidyverse. To run the codeblock, hit the little green play button in the upper right corner of the gray area (the codeblock) below.
+
+```{r}
+# Load the tidyverse. If you have not installed the tidyverse already, remove the # from the next line and run it first.  
+# install.packages('tidyverse')
+library(tidyverse)
+```
+
+## Load Data
+
+We're going to load the slice of WinRed contribution data from West Virginia, which is in a file called `lab_01.rds`
+
+**Task** Using the example from the pre_lab, write code to load the RDS file and assign it to a good variable name.
+
+```{r}
+WV_winred <- read_rds("lab_01.rds")
+```
+
+## Examine Data
+
+**Task** Run the codeblock below to use glimpse to get a sense of the column names, types and sample data.
+
+**Q1** How many rows and columns does this dataframe have?
+
+
+**A1**
+24 columns,40,441 rows 
+```{r}
+glimpse(WV_winred)
+
+```
+
+## Answer questions
+
+**Q2** Which West Virginia city provided the largest number of contributions? How many?
+
+**A2**
+Charleston - 3226
+
+
+```{r}
+WV_winred |>
+  group_by(city) |>
+  summarise(
+    count_contribs = n()
+  ) |>
+  arrange(desc(count_contribs))
+```
+
+**Q3** Which West Virginia cities accounted for the fewest contributions? How many of them, roughly speaking?
+
+**A3**
+There were a lot, Allen Junction, Alum Bridge, Bridgeport, Bergoo, etc. There are roughly 65 cities.
+
+```{r}
+```
+
+**Q4** What's your best educated guess to explain why the city identified in question 2 had more contributions compared to the cities identified in question 3? Hint: you won't find the answer in the data, you'll need to do some quick web research. You do not need to write any code for this question, so no codeblock is provided.
+
+**A4**
+Without researching, I assume that this area is either more wealthy or has more Republicans. Upon doing research I learned that the people in Charleston make about double what the people in West Liberty, one of the low contribution cities, make. Charleston also seems to be a lot more Republican. 
+
+**Q5** What recipient got the largest total amount of money? How many contributions did they receive and what was the average donation?
+
+**A5**
+
+```{r}
+WV_winred |>
+  group_by(memo_text) |>
+  summarise(
+    total = sum(amount),
+    count_contribs = n(),
+    avg_contrib = mean(amount)
+  ) |>
+  arrange(desc(total))
+
+```
+
+**Q6** What is that top recipient and what explains its popularity? Hint: this will require web research, you won't be able to answer this purely from the data set. You do not need to write any code for this question, so no codeblock is provided.
+
+**A6**
+Earmarked for TRUMP NATIONAL COMMITTEE JFC, INC. (C00873893). This is the Trump national committee and people were most likely just a Trump supporter. 
+
+Trump out raises within the state and no one else is even close. 
+
+**Q7**. Using the answer from A5 as a starting point, produce a summary table that has the following information for each recipient: \* count of contributions \* total amount of all contributions \* the average contribution amount \* the median contribution amount \* the smallest contribution amount \* the largest contribution amount
+
+Store it as a variable object called `wv_summary` so that you can examine it with the data viewer. What newsworthy nuggets jump out at you that you could imagine dropping into a news story? Write a few summary sentences with overall findings.
+
+**A7**.
+The only newsworthy nugget that sticks out to me is how much higher the Trump National Committee amounts are than any others. The second doesn't even come in half of it. I would be curious to know whether they send out more messages, do more marketing, have the best SEO...Why are so many more people or people in much larger amounts donating to this when there are other Trump fundraisers?
+
+```{r}
+WV_winred |>
+  group_by(memo_text) |>
+  summarise(
+    aggregate_amount = n(),
+    total_amount = sum(amount),
+    mean_amount = mean(amount),
+    median_amount = median(amount),
+    min_amount = min(amount),
+    max_amount = max(amount)
+  ) |>
+  arrange(desc(aggregate_amount))
+```
+```{r}
+'wv_summary' <- WV_winred |>
+      group_by(memo_text) |>
+  summarise(
+    aggregate_amount = n(),
+    total_amount = sum(amount),
+    mean_amount = mean(amount),
+    median_amount = median(amount),
+    min_amount = min(amount),
+    max_amount = max(amount)
+  ) |>
+  arrange(desc(aggregate_amount))
+```

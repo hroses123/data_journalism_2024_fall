@@ -30,7 +30,7 @@ The library function loads an R library such as the tidyverse, providing access 
 
 ### Task 1: The console
 
-**Task** In the console (look below), type 2+2 and hit enter. What does it return? Type your answer below. **Answer:**4
+**Task** In the console (look below), type 2+2 and hit enter. What does it return? Type your answer below. **Answer:**
 
 ### Task 2: Variables
 
@@ -48,7 +48,7 @@ number * number
 
 What does it return? Type your answer below:
 
-**Answer:** 4
+**Answer:**
 
 ### Task 3: Install packages
 
@@ -88,7 +88,7 @@ maryland_winred_contributions <- read_rds("pre_lab_01.rds")
 
 Once it loads, look at the environment window at right in RStudio for maryland_winred_contributions. It's next to a small blue circle with a white arrow in it. To the right of that, look at how many "obs" the dataset has ("obs" is short for observation, which is another way of saying rows or records). Look at how many variables it has (another way of saying columns or fields). Write the number of observations and variables below.
 
-**Answer** 131,000 obs and 24 rows
+**Answer**
 
 ### Task 3: Glimpse data
 
@@ -98,7 +98,7 @@ Once it loads, look at the environment window at right in RStudio for maryland_w
 glimpse(maryland_winred_contributions)
 ```
 
-In the space below, write the data type for the "last_name" column and the "amount" columns (it's in light gray, offset by \< \>). Also offer your best guess as to what the "last_name" column and the "amount" column represent. **Answer**"last_name" is <chr>, "amount" is <dbl> . The last name represents the last names of the people. The amount column represents the amount of money each person gave.
+In the space below, write the data type for the "last_name" column and the "amount" columns (it's in light gray, offset by \< \>). Also offer your best guess as to what the "last_name" column and the "amount" column represent. **Answer**
 
 ### Task 4: Examine data "head"
 
@@ -109,7 +109,7 @@ head(maryland_winred_contributions)
 ```
 
 In the space below, write the first and last name from the _second_ row of the data. **Answer**
-Peggy Mukai
+
 ### Task 5: Explore data with interactive dataframe
 
 **Task** look at the environment window at right in RStudio for maryland_winred_contributions It's next to a small blue circle with a white arrow in it. Click on the maryland_winred_contributions -- not the blue circle. It will open the dataframe as an interactive table. Scroll down to see additional rows. Scroll left to see additional columns. Click on a column name to sort by that column.
@@ -123,13 +123,12 @@ maryland_winred_contributions |>
   group_by(date) |>
   summarise(
     count_contribs = n()
-  ) 
+  )
 ```
 
 Describe what you think this code is doing below. What does the answer represent, compared to the results from `head()`?
 
 **Answer**
-I think this code is pulling the dates that people made contributions and the number of contribtuions from that day. Whereas head just showed the top 6. 
 
 ### Task 7: Adding arrange()
 
@@ -147,7 +146,6 @@ maryland_winred_contributions |>
 Compared to the previous codeblock, what has changed and how did that affect the result?
 
 **Answer**
-It changed how the information was displayed. It is now in descending order not the default of ascending. 
 
 ### Task 8: Multiple grouping
 
@@ -164,7 +162,7 @@ maryland_winred_contributions |>
 
 Compared to the previous codeblock, what has changed and how did that affect the result?
 
-**Answer** We are now grouping by memo text and amount and not just date. 
+**Answer**
 
 ### Task 9
 
@@ -182,7 +180,7 @@ maryland_winred_contributions |>
 
 Compared to the previous codeblock, what has changed and how did that affect the result? 
 
-**Answer** We are now grouping by memo text and amount and not just date.
+**Answer**
 
 ### Task 10: More descriptive statistics
 
@@ -202,7 +200,7 @@ maryland_winred_contributions |>
 
 Compared to the previous codeblock, what has changed and how did that affect the result? Glancing at the names, which of the top results from Maryland?
 
-**Answer** We now see memo.
+**Answer**
 
 ### Task 11
 
@@ -222,4 +220,4 @@ maryland_winred_contributions |>
   arrange(desc(total_amount))
 ```
 
-Compared to the previous codeblock, what has changed and how did that affect the result? How is the data sorted? **Answer** We now see the descriptive statistics. 
+Compared to the previous codeblock, what has changed and how did that affect the result? How is the data sorted? **Answer**

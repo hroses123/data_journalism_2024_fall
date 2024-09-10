@@ -30,6 +30,85 @@ Besides counting contributions, you can also calculate the total, average, media
 
 Uploading libraries: Using the read_rds() function to import data ensures that the dataset is loaded correctly from an R-specific file format. This is crucial because it prevents issues that might arise from data type mismatches or formatting errors. Properly loading data with read_rds() gives accurate analysis and prevents problems that could lead to incorrect conclusions.
 
+
+
+Lab 1: 
+Aggregates
+
+glimpse(WV_winred)
+
+How many? Counting with n
+WV_winred |>
+  group_by(city) |>
+  summarise(
+    count_contribs = n()
+  ) |>
+  arrange(desc(count_contribs))
+  
+How much? A total
+WV_winred |>
+  group_by(memo_text) |>
+  summarise(
+    aggregate_amount = n(),
+    total_amount = sum(amount),
+    mean_amount = mean(amount),
+    median_amount = median(amount),
+    min_amount = min(amount),
+    max_amount = max(amount)
+  ) |>
+  arrange(desc(aggregate_amount))
+  
+  
+  
+  Lab 2
+  Changing data, mutate, filtering, dates
+  Lubridate: Dates: library(lubridate)
+  read_csv -- reads a csv in tidyverse
+  read.csv -- appears to do the same thing as above but less
+  
+  summary(primary_24) -- does math on the numeric columns, quartiles
+colnames(primary_24) -- arrow but horizontal
+
+Mutate: 
+
+Create percentages
+primary_24 |>
+  select(office_name, office_district, candidate_name, party, county_name, election_day, votes) |>
+  mutate(
+  percent_election_day = election_day/votes
+  
+  `str_to_upper` - uppercases everything
+  
+  Case when - a condition
+  
+  maryland_winred_categories <- maryland_winred_contributions |>
+  mutate(
+    amount_category = case_when(
+        amount < 100 ~ "Less than $100",
+        amount >= 100 & amount < 500 ~ "Between $100 and $499",
+        amount >= 500 & amount < 1500 ~ "Between $500 and $1499",
+        amount >= 1500 & amount < 3000 ~ "Between $500 and $2999",
+        amount >= 3000 ~ "$3,000 or more"
+      )
+  )
+head(maryland_winred_categories)
+
+or 
+
+maryland_winred_categories <- maryland_winred_contributions |>
+  mutate(
+    amount_category = case_when(
+        amount < 100 ~ "Less than $100",
+        amount >= 100 & amount < 500 ~ "Between $100 and $499",
+        amount >= 500 & amount < 1500 ~ "Between $500 and $1499",
+        amount >= 1500 & amount < 3000 ~ "Between $500 and $2999",
+        amount >= 3000 ~ "$3,000 or more"
+      )
+  )
+group_by(amount category) 
+summarize(contribs = )
+
+Filter: always use ==
 ```{r}
 setwd("~/jour472/data_journalism_2024_fall")
 ```
