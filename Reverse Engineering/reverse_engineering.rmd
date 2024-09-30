@@ -28,18 +28,22 @@ library(refinr)
 
 ```{r}
 # Load data
-congress_expenses <- read_csv("congress_expenses.csv")
+congress_expenses <- read_csv("APRIL-JUNE-2024-SOD-DETAIL-GRID-FINAL.csv")
 
 # Display it
 congress_expenses
 ```
 ```{r}
 congress_expenses |>
-  group_by(ORGANIZATION) |>
+top_reimbursement_expenses <- congress_expenses
+  group_by(ORGANIZATION)
   summarise(
     AMOUNT= n()
+  )
   ) |>
-  arrange(desc(ORGANIZATION))
+arrange(desc(ORGANIZATION)) 
+
+
 ```
 
 
