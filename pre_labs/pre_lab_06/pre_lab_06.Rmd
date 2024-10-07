@@ -97,7 +97,7 @@ You can now export that extracted table to a CSV file using the "Export" button.
 
 ### Task 5: Export the CSV file
 
-**Task** Export the CSV file to your pre_lab_06 folder and read it into R by running the following codeblock. What problems do you see with the data? **Answer**
+**Task** Export the CSV file to your pre_lab_06 folder and read it into R by running the following codeblock. What problems do you see with the data? **Answer** The data still has blank rows which is confusing and clunky. 
 
 ```{r}
 benzie_2024 <- read_csv("tabula-Benzie Aug 6,2024 Official Precinct Results.csv")
@@ -113,7 +113,7 @@ Then we've got rows with NAs, plus office names mixed up with candidate names. L
 
 ### Task 6: Cleaning up & getting rid of rows we don't need
 
-**Task** Get rid of rows we don't need by running the codeblock below. What problems remain? **Answer**
+**Task** Get rid of rows we don't need by running the codeblock below. What problems remain? **Answer** We still cannot discern what everything is because we do not have thorough information such as headers.
 
 ```{r}
 benzie_2024 <- read_csv("tabula-Benzie Aug 6,2024 Official Precinct Results.csv", col_names = FALSE)
@@ -129,7 +129,7 @@ Ok, now we have numbers and candidates, but we still need better headers and a w
 
 ### Task 7: Making a party column, changing headers and adding an office column.
 
-**Task** Run the codeblock below. What changed, and what issues or problems remain? **Answer**
+**Task** Run the codeblock below. What changed, and what issues or problems remain? **Answer** We now have headers so we can understand the information below. We still need more information for offices and candidates as we do not have all of the information to go under there. That way, we could have more comprehensive data. 
 
 ```{r}
 benzie_2024 <- benzie_2024 |>
