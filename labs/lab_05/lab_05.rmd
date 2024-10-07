@@ -28,8 +28,8 @@ First, load two CSV contribution files in the `data` folder, one each for donati
 
 ```{r}
 # load the Harris contribution data files and combine them
-august_harris <- read.csv("data/august_harris.csv")
-july_harris <- read.csv("data/july_harris.csv")
+august_harris <- read_csv("data/august_harris.csv")
+july_harris <- read_csv("data/july_harris.csv")
 
 combined_harris <- bind_rows(august_harris, july_harris)
 
@@ -41,24 +41,27 @@ Next, let's read in the new voters (people who registered in 2024):
 
 ```{r}
 # load the new voters data
-new_voters  <- read.csv("data/new_voters.csv")
+new_voters  <- read_csv("data/new_voters.csv")
 ```
 
 Next join the Harris donations to the voter data. Remember, people's names are common, __so you'll want to use name columns and address information__. You'll need to figure out which columns to use from both dataframes. The new_voters data has both a single Address column and various parts of the address, such as HouseNumber. Make a plan for picking your join columns - try out some combinations - and save the results to a new dataframe.
 
 ```{r}
-
 combined_harris <- combined_harris %>%
-  mutate(
-    first_name = str_to_upper(first_name),
-    last_name = str_to_upper(last_name)
-  )
-new_voters <- new_voters %>%
-  mutate(
-    firstname = str_to_upper(firstname),
-    lastname = str_to_upper(lastname)
+  mutate(first_name = str_to_upper(first_name),
+         last_name = str_to_upper(last_name),
+          address_one = str_to_upper(address_one)
   )
 
+new_voters <- new_voters %>%
+  mutate(FirstName = str_to_upper(FirstName),
+         LastName = str_to_upper(LastName),
+         Address = str_to_upper(Address))
+
+combined_data <- combined_harris %>%
+  inner_join(new_voters, join_by(first_name == FirstName, 
+                           last_name == LastName, 
+                           address_one == Address))
 
 
   
@@ -71,22 +74,64 @@ new_voters <- new_voters %>%
 Q1. Explain why you used the columns you did to make the join, and why that result is better than other ways you tried. Are there any problems with the join you made, such as the possibility of false positives?
 
 A1. 
+I used both first and last names to uniquely identify individuals and reduce the chances of matching different people with common names.
+
+I also used Address and address_one because they most closely resembled each other in how they looked. I initially tried with streetname and housename but it was too difficult because they did not resemble each other and I could not combine them. 
+
+Potential problems include the possibility of false positives if multiple people have the same name and address, leading to duplicated records.
+
+Incomplete data, like missing values , could lead to missing records during the join.
 
 Q2. Based on your join, how many donations to Harris have come from people who registered this year? How many unique people does that represent, and which donors have given the largest _number_ of donations since July 20? 
 
 A2. 
+365 donations
+270 unique donations
+Brittany Musolino, Eric Snope, Sophia Hoffer-Perkins have given the most number of times (7).
+
 
 ```{r}
+donations <- combined_data %>%
+  filter(year(date) == year(Sys.Date())) %>%
+  summarise(
+    total_donations = n(),
+    unique_donors = n_distinct(paste(first_name, last_name))
+  )
+
+top_donors <- combined_data %>%
+  filter(date > "2023-07-20") %>%
+   group_by(first_name, last_name) %>%
+  summarise(donation_count = n()) %>% 
+                arrange(desc(donation_count))
+
+(top_donors)
 ```
+
 
 Q3. What are the party and gender breakdowns of those donors? How many donations has Harris gotten from non-Democrats?
 
-A3. 
+A3. Look at code
 
 ```{r}
+party_gender <- combined_data %>%
+  group_by(Party, Gender) %>%
+  summarise(donation_count = n()) %>%
+  arrange(desc(donation_count))
 
+non_dem_donations <- combined_data %>%
+  filter(Party == "DEM") %>%
+  summarise(non_democrat_count = n())
+(party_gender)
+(non_dem_donations)
 ```
 
 Q4. Choose your own adventure: I want you to come up with a question you could ask of one of the dataframes we've created for this lab. It could involve just the new voters, or the donors or the joined dataframe, but it cannot be a variation of a previous question (so, for example, you can't ask, "How many Republicans have given to Harris"). First write the question and then try to answer it by writing code. If you're not sure of the exact code, try googling (or ask me for advice) but, at a minimum, describe what you think you'd have to do to answer it and what the results would look like. That can help.
 
+
 A4:
+
+What is the average donation amount made by voters in the combined dataset?
+
+average_donations <- combined_data %>%
+  group_by(first_name, last_name) %>%
+  summarize(average_donation = mean))
