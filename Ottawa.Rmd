@@ -1,0 +1,57 @@
+---
+title: "tabula_ottawa"
+output: html_notebook
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+# turn off sci notation
+options(scipen=999)
+library(tidyverse)
+options(scipen=999)
+library(lubridate)
+```
+
+```{r}
+tabula_ottawa <- read_csv("ottawa.csv" , col_names = FALSE)
+tabula_ottawa <- tabula_ottawa |>
+  rename( District_2_Ottawa_County_Precincts = X1)
+
+tabula_ottawa <- tabula_ottawa |>
+  rename( Chris_Kleinjans_Dem = X2)
+
+tabula_ottawa <- tabula_ottawa |>
+  rename( Lucy_Ebel_Rep = X3)
+
+tabula_ottawa <- tabula_ottawa |>
+  rename( Cast_Votes = X4)
+
+tabula_ottawa <- tabula_ottawa |>
+  rename( Undervotes = X5)
+
+tabula_ottawa <- tabula_ottawa |>
+  rename( Overvotes = X6)
+
+tabula_ottawa <- tabula_ottawa |>
+  rename( Election_Day_Ballots_Cast = X7)
+
+tabula_ottawa <- tabula_ottawa |>
+  rename( Absentee_Ballots_Case = X8)
+
+tabula_ottawa <- tabula_ottawa |>
+  rename( Total_Ballots_Case = X9)
+
+tabula_ottawa <- tabula_ottawa |>
+  rename( Registered_Voters = X10)
+
+tabula_ottawa <- tabula_ottawa |>
+  rename( Turnout_Percentage = X11)
+filter(!is.na(Turnout_Percentage))
+
+
+```
+
