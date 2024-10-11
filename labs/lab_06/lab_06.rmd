@@ -298,9 +298,44 @@ filter(!is.na(CHANGE_DEM))
 
 Q2. Among the Maryland jurisdictions with the most registered voters, which one had the biggest percentage increase in unaffiliated voters between 2022 and 2024? How did that county vote for governor in 2022 and for president in 2020? Contrast the partisan percentages of that county with the county that had the eighth-largest percentage increase in unaffiliated voters. You should display information from the data that shows the counties with the largest percentage increase first.
 
-A2.
+A2.Montgomery had the largest amount of total registered voters in 2024 and 2022. The biggest percentage increase in UNAF voters, however, was in PG County who has the second highest number of registered voters. They had around a 14% increase in UNAF voters from 2022 to 2024, which I just simply inputted into a % change calculator. 
+
+Partisan data from PG, 2022: DEM:464963 REP:37836  , 2024: DEM: 456887 REP:39974
+Partisan data from Frederick, 2022: DEM:77282 REP:68809 2024: DEM: 78789 REP: 68925
+
+PG is simply just larger and has significantly more voters. Although they have more, Frederick has more of a population of Republicans. 
+
+PG GOV. 2022 - Wes Moore
+PG PRESIDENT 2024 - Joe Biden
 
 ```{r}
+top_current <- current %>%
+  group_by(COUNTY, UNAF) |>
+  summarise(
+  ) |>
+  arrange(desc(UNAF))
+
+top_current_2022 <- current_2022 %>%
+  group_by(COUNTY, UNAF) %>%
+  summarise() %>%
+  arrange(desc(UNAF))
+
+merged_data <- top_current %>%
+  select(COUNTY, UNAF) %>%
+  rename(UNAF_2024 = UNAF) %>%
+  left_join(top_current_2022 %>% select(COUNTY, UNAF), by = "COUNTY") %>%
+  rename(UNAF_2022 = UNAF)
+
+merged_data <- merged_data %>%
+  mutate(
+    percentage_change = ((UNAF_2022 - UNAF_2024) / UNAF_2024) * 100
+  )
+merged_data|>
+group_by(COUNTY, percentage_change)|>
+  summarise()|>
+  arrange(percentage_change)
+
+
 
 ```
 
@@ -308,9 +343,60 @@ Q3. Do the party percentages of new registrants (% Dem, % Rep, % Unaffiliated) f
 
 In other words, did new registrants mirror the overall partisan composition of the electorate, or were they different? Do any of the methods of registration vary significantly from the overall partisan pattern? Which method is worthy of further exploration?
 
-A3.
+A3.The party registration in PG county in 2022 of Dems more closely refers to the overall than REP. 
+In 2024, this information is NA. 
+
+I think it is more interesting to look at how the Republican does not closely refer to the overall because you could explore how a certain county votes. 
+
 
 ```{r}
+party_percentage <- party_registrations %>%
+  group_by(COUNTY, UNAF, REP, DEM) |>
+  summarise(
+  ) |>
+  arrange()
+
+party_percentage_2022 <- party_registrations_2022 %>%
+  group_by(COUNTY, UNAF, REP, DEM) |>
+  summarise(
+  ) |>
+  arrange()
+
+party_registrations <- party_registrations %>%
+  mutate(
+    UNAF = as.numeric(as.character(UNAF)),
+    REP = as.numeric(as.character(REP)),
+    DEM = as.numeric(as.character(DEM))
+  )
+
+
+party_percentage <- party_registrations %>%
+  group_by(COUNTY) %>%  
+  summarise(
+    TOTAL = sum(UNAF, REP, DEM), 
+    PERCENT_UNAF = sum(UNAF) / TOTAL * 100, 
+    PERCENT_DEM = sum(DEM) / TOTAL * 100,
+    PERCENT_REP = sum(REP) / TOTAL * 100
+  ) %>%
+  arrange()
+
+party_registrations_2022 <- party_registrations_2022 %>%
+  mutate(
+    UNAF = as.numeric(as.character(UNAF)),
+    REP = as.numeric(as.character(REP)),
+    DEM = as.numeric(as.character(DEM))
+  )
+
+party_percentage_2022 <- party_registrations_2022 %>%
+  group_by(COUNTY) %>%  
+  summarise(
+    TOTAL = sum(UNAF, REP, DEM),
+    PERCENT_UNAF = sum(UNAF) / TOTAL * 100,
+    PERCENT_DEM = sum(DEM) / TOTAL * 100, 
+    PERCENT_REP = sum(REP) / TOTAL * 100
+  ) %>%
+  arrange() 
+
 
 ```
 
@@ -318,13 +404,47 @@ Q4. Choose your own adventure! Using both the 2024 and 2022 data for one of the 
 
 A4.
 
+How many more Democratic voters were removed in September 2024 compared to September 2022?
+1,848
+
 ```{r}
+
+removals_2022 <- tibble(
+  DEM = c(11533) )
+
+removals <- tibble(
+  DEM = c(9685) 
+)
+
+removals_2022_new <- removals_2022 %>% 
+select(DEM)
+removals_new <- removals %>% 
+select(DEM)
+
+
+removals_2022_new <- removals_2022_new %>% 
+rename(DEM_2022 = DEM)
+removals_new <- removals_new %>% 
+rename(DEM_2024 = DEM)
+
+
+dem_removal_change <- removals_new %>%
+  bind_cols(removals_2022_new) %>% 
+  mutate(DEM_CHANGE = DEM_2024 - DEM_2022) %>%  
+  select(DEM_CHANGE) 
+
+dem_removal_change
+
+
+
 
 ```
 
 Q5. What's the best story idea or question you've seen as a result of the work you've done in this lab?
 
 A5.
+
+One interesting story idea that came from this lab is looking at how voter removals affect local elections. By comparing the rates of removals between 2022 and 2024 in different counties, we can see if there are patterns in who is being removed from the voter rolls. This could help us understand how these changes might impact voter turnout and representation in those areas, showing why it's important to protect people's voting rights.
 
 
 ```
