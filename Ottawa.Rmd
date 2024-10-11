@@ -49,7 +49,7 @@ tabula_ottawa <- tabula_ottawa |>
   rename( Registered_Voters = X10)
 
 tabula_ottawa <- tabula_ottawa |>
-  rename( Turnout_Percentage = X11)
+  rename( Turnout_Percentage = X11) |>
 filter(!is.na(Turnout_Percentage))
 
 
