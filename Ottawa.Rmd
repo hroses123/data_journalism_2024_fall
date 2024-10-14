@@ -52,6 +52,6 @@ tabula_ottawa <- tabula_ottawa |>
   rename( Turnout_Percentage = X11) |>
 filter(!is.na(Turnout_Percentage))
 
-
+write_csv(tabula_ottawa, "tabula_ottawa.csv")
 ```
 
