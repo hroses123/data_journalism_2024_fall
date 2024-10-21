@@ -155,12 +155,21 @@ republican_except_governor_by_zip
 
 **Q5** Let's find out more about those zip codes from A4. Using tidycensus, get a dataframe of Maryland zip codes and their median ages, then join it to the dataframe you produced in A4. NOTE: you'll need to ensure that the two columns you use for the join are the same datatype. Summarize your findings; how would you describe the zip codes with more non-Cox Republicans compared to those with fewer? Where are those leading zip codes located?
 
+More non-Cox REP, in 21702 have a younger medage of 37.5, Fewer in 21780. with an older medage of around 45. Leading zips are 21702, 21701, 21793. They are all pretty close to Frederick proper. They all look pretty nice, house wise. 
+
 **A5**
 
 ```{r}
 
+colnames(republican_except_governor_by_zip)
+colnames(md_zip_age)
+
 acs_2022 <- load_variables(2022, "acs5", cache = TRUE)
 (acs_2022)
+
+republican_except_governor_by_zip <- republican_except_governor_by_zip |>
+  mutate(zipcode = as.character(zipcode))
+
 
 md_zip_age <- get_acs(
  geography = "zcta",
@@ -174,9 +183,11 @@ md_zip_age <- md_zip_age |>
 md_zip_age <- md_zip_age |> 
  mutate(GEOID = as.character(GEOID))
 
-combined_data <- left_join(republican_except_governor_by_zip, md_zip_age, by = c("GEOID", "zipcode"))
+combined_data <- left_join(republican_except_governor_by_zip, md_zip_age, by = c("zipcode" = "GEOID"))
 
 
 (combined_data)
+
+
 
 ```
