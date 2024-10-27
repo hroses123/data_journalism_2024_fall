@@ -1,0 +1,207 @@
+---
+title: "lab_08"
+author: "derek willis"
+date: "2024-10-21"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+In this lab we'll be looking at Maryland absentee ballot requests in the 2024 election and making several charts based on that data. The state of Maryland reports the number of ballots sent to voters by counties and the number received by counties from voters. We'll use both types of information.
+
+## Load libraries and establish settings
+
+**Task** Create a codeblock and load appropriate packages and settings for this lab. We'll be making some charts and cleaning up data.
+
+```{r}
+# Turn off scientific notation
+options(scipen=999)
+
+# Load libraries
+library(tidyverse)
+library(janitor)
+
+```
+
+## Load data
+
+**Task** Create a codeblock and load the following data from the data folder:
+
+-   Maryland absentee ballots sent and returned - `md_absentee_ballots.csv`
+-   Maryland absentee ballots sent and returned by date - `md_absentee_ballots_date.csv`
+
+You can clean up column names to make them easier to work with if you like, and should ensure that any date columns are actually date formatted.
+
+```{r}
+# load the data
+md_absentee_ballots <- read_csv("data/md_absentee_ballots.csv")
+md_absentee_ballots_date <- read_csv("data/md_absentee_ballots_date.csv")
+
+md_absentee_ballots <- md_absentee_ballots %>%
+  clean_names() %>%
+  mutate(across(contains("date"), as.Date, format = "%Y-%m-%d"))
+
+md_absentee_ballots_date <- md_absentee_ballots_date %>%
+  clean_names() %>%
+  mutate(across(contains("date"), as.Date, format = "%Y-%m-%d"))
+
+(md_absentee_ballots)
+(md_absentee_ballots_date)
+
+```
+
+## Questions
+
+**Q1.** Which county has the highest percentage of total absentee ballots returned of total ballots sent? Make a bar chart of the top 10 counties. Your bar chart must have:
+
+-   A clear title that states the main idea/finding
+-   Good labels for the x & y axis and a caption for the source, which is the Maryland State Board of Elections
+-   Readable bars - the values shouldn't be overlapping
+
+**A1.** 
+Look at the chart
+```{r}
+md_absentee_ballots <- read_csv("data/md_absentee_ballots_date.csv")
+
+md_absentee_ballots <- md_absentee_ballots %>%
+  clean_names() %>%
+  group_by(county_name) %>%
+  filter(date == max(date)) %>% 
+  ungroup()
+
+md_absentee_ballots <- md_absentee_ballots %>%
+  mutate(percent_returned = (total_received / total_sent) * 100)
+top_10_counties <- md_absentee_ballots %>%
+  arrange(desc(percent_returned)) %>%
+  slice(1:10)
+
+ggplot(top_10_counties, aes(x = reorder(county_name, percent_returned), y = percent_returned)) +
+  geom_bar(stat = "identity", fill = "blue") +
+  coord_flip() +  
+  labs(
+    title = "Top 10 Maryland Counties by % of Returned Absentee Ballots",
+    x = "County",
+    y = "% of Absentee Ballots Returned",
+    caption = "Source: Maryland State Board of Elections"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+
+
+```
+
+**Q2.** What are the top 10 counties with the lowest percentage of ballots returned by Democratic voters, and what is the difference between the percentage returned for Democrats and Republicans in those counties? You MUST do the following things when answering this question:
+
+-   Make a codeblock below to write your code in.
+-   Calculate the percentage of ballots returned by both Democrats and Republicans.
+-   Arrange the dataframe to show the counties with the smallest percentage of returned ballots from Democrats first.
+-   Use ggplot to make a horizontal bar chart that shows just the first 10 counties, with the length of the bar determined by the county's percentage of ballots returned by Democrats. Give it an appropriate title, source, and x and y axis titles.
+
+**A2.**
+Look at tibble 1 for the answers. 
+
+
+```{r}
+
+md_absentee_ballots <- md_absentee_ballots %>%
+  mutate(dem_percentage_returned = dem_received / dem_sent * 100,
+         rep_percentage_returned = rep_received / rep_sent * 100,
+         percentage_difference = dem_percentage_returned - rep_percentage_returned)
+
+top_counties <- md_absentee_ballots %>%
+  arrange(dem_percentage_returned) %>%
+  select(county_name, dem_percentage_returned, rep_percentage_returned, percentage_difference) %>%
+  slice(1:10)
+
+print(top_counties)
+
+ggplot(top_counties, aes(x = reorder(county_name, dem_percentage_returned), 
+                          y = dem_percentage_returned)) +
+  geom_bar(stat = "identity", fill = "blue") +
+  coord_flip() +
+  labs(title = "Top 10 Counties with Lowest % of Ballots Returned by Democratic Voters",
+       x = "County",
+       y = "% of Ballots Returned (%)",
+       caption = "Source: md_absentee_ballots Dataset") +
+  theme_minimal()
+
+
+```
+**Q3** Let's make a line chart using the second set of absentee ballot data - this one tracking returns by date. We want to see received ballots for Frederick County for Democrats, Republicans and Others, so you'll make a chart with three lines, adding color to each one (you can choose, but choose sensibly). Give the chart a title and good labels. What's the story that this line chart tells? Compare and contrast the three lines. Does it match what you know about absentee voting habits? 
+
+**A3**  This line chart tells us that Democrats generally send in the most ballots and others, the least. Republicans are much closer to Dems which is interesting to me because I would think that a major party would send a bunch in. This does match what I know because I know that a lot of Dems use absentee voting, whereas Reps are generally more skeptical. 
+
+```{r}
+
+line_chart <- data.frame(
+  date = as.Date(c("2024-10-12", "2024-10-13", "2024-10-14", "2024-10-15", 
+                   "2024-10-16", "2024-10-17", "2024-10-18", "2024-10-19", 
+                   "2024-10-20", "2024-10-21", "2024-10-22", "2024-10-23")),
+  dem_sent = c(20576, 20576, 20569, 20568, 21069, 21080, 21315, 21326, 21331, 21327, 21327, 21688),
+  rep_sent = c(7962, 7962, 7959, 7959, 8199, 8209, 8328, 8336, 8348, 8348, 8348, 8534),
+  oth_sent = c(7378, 7378, 7377, 7377, 7675, 7691, 7844, 7858, 7875, 7873, 7873, 8087)
+)
+
+# Create the line chart without reshaping the data
+line_chart <- ggplot(data) +
+  geom_line(aes(x = date, y = dem_sent, color = "Democrats"), size = 1) + 
+  geom_line(aes(x = date, y = rep_sent, color = "Republicans"), size = 1) +  
+  geom_line(aes(x = date, y = oth_sent, color = "Others"), size = 1) + 
+  geom_point(aes(x = date, y = dem_sent, color = "Democrats"), size = 2) +  
+  geom_point(aes(x = date, y = rep_sent, color = "Republicans"), size = 2) + 
+  geom_point(aes(x = date, y = oth_sent, color = "Others"), size = 2) +  
+  labs(title = "Ballots Sent by Party",
+       x = "Date",
+       y = "Number of Ballots Sent",
+       color = "Party") +  
+  theme_minimal() +  
+  scale_color_manual(values = c("Democrats" = "blue", 
+                                  "Republicans" = "red", 
+                                  "Others" = "green"))  # Set colors
+
+print(line_chart)
+
+
+
+```
+
+**Q4.** A scatterplot is a type of chart that helps us see relationships between two variables. One variable goes on the x axis, the other on the y axis. For each row/observation in our data, a scatterplot puts a circle (or a "point") where the two variables intersect on a grid.
+
+Statisticians use scatterplots to show graphically whether one variable is correlated -- related, in a statistical sense -- with another variable. A classic example is the [relationship between ice cream sales and temperature](https://www.mathsisfun.com/data/scatter-xy-plots.html). The scatterplot below -- press play to load the image -- shows that relationship, that an increase in temperature is associated with an increase in ice cream sales. When it's 12C, sales are 200 dollars, and when it's hotter, 25C, sales are 600 dollars.
+
+```{r}
+knitr::include_graphics("https://www.mathsisfun.com/data/images/scatter-ice-cream1.svg")
+```
+
+We're going to use a scatterplot to get a visual sense of two key variables: ballots sent and ballots returned. We want to plot both of those for each county in Maryland. IMPORTANT: you need to choose whether you use total ballots or one of the parties.
+
+Follow these steps:
+
+1. Using the first dataframe (the one without dates), make a scatterplot showing the number of ballots sent on one axis and the number received on the other axis. The pre_lab didn't show you how to do this, so look it up! https://ggplot2.tidyverse.org/reference/geom_point.html?q=geom_point#aesthetics is a good start.
+2. Give it an appropriate title, source, and x and y axis titles.
+3. Try to add a label for each point that shows the name of the county using geom_text(). You might need to find alternative ways to do this to make them readable.
+4. Add a line of fit to the plot using geom_smooth (https://ggplot2.tidyverse.org/reference/geom_smooth.html#ref-examples). Specify the method as lm.
+5. In the answer space below, describe what you see. In a general sense, how would you report out the main point(s) of this chart? Are there counties that seem to be over or under-performing in relation to the overall trend?
+
+**A4.** 
+
+```{r}
+
+scatter_plot <- md_absentee_ballots %>%
+  ggplot(aes(x = total_sent, y = total_received, label = county_name)) +  # Set x and y aesthetics
+  geom_point(color = "blue", size = 3) +  # Add points
+  geom_text(aes(label = county_name), vjust = -1, size = 3, check_overlap = TRUE) +  # Add labels with overlap checking
+  geom_smooth(method = "lm", se = FALSE, color = "red") +  # Add a line of fit
+  labs(title = "Relationship Between Ballots Sent and Ballots Received in Maryland Counties",
+       x = "Total Ballots Sent",
+       y = "Total Ballots Received",
+       caption = "Source: Maryland State Board of Elections") +  
+  theme_minimal() 
+
+
+print(scatter_plot)
+
+  
+```
