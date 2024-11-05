@@ -20,6 +20,7 @@ Alsobrooks was the winner in the Senate race, but that wasn't a clear-cut outcom
 ```{r}
 library(tidyverse)
 library(janitor)
+
 ```
 
 ### Task 2: Get 2024 Democratic primary data
