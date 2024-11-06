@@ -414,7 +414,7 @@ And then map it:
 
 ### Task: Run code
 
-**Task** Run the following code. Describe the output in the space below. What regional patterns do you see, especially on the ends of the scale? **Answer** I see that in the middle were generally closer to 1500 but the ends kind are all over the place. Towards borders were all over the place too. 
+**Task** Run the following code. Describe the output in the space below. What regional patterns do you see, especially on the ends of the scale? **Answer** I see that in the middle were generally closer to 1500 but the ends kind are all over the place. Towards borders were all over the place
 
 ```{r}
 ggplot() +
