@@ -202,8 +202,25 @@ ggplot(md_map_data) +
 **Q4.** Choose your own map adventure! In the data folder I've included Maryland county-level results for the abortion rights amendment vote this year, plus the 2020 presidential results by county and 2022 governor's results by county. Using one of those and at least one other contest for comparison, make a county-level map showing what you think is the most interesting aspect of that data, and describe the results in terms of a possible story. You can bring in other data, such as Census information, if you like.
 
 **A4.**
+The map compares Trump support in the 2024 election with opposition to abortion in Maryland counties. It's newsworthy because it shows how these two issues are connected in some areas, but also highlights differences in how voters prioritize them across the state.
 
 ```{r}
+md_pres_data <- read_csv("data/md_pres_county_24.csv") %>%
+  rename(
+    county = County,
+    geoid = GEOID,
+    trump_votes = Trump,
+    harris_votes = Harris,
+    oliver_votes = Oliver,
+    stein_votes = Stein,
+    kennedy_votes = Kennedy
+  ) %>%
+  mutate(
+    geoid = as.character(geoid),
+    total_votes = trump_votes + harris_votes + oliver_votes + stein_votes + kennedy_votes,
+    trump_pct = (trump_votes / total_votes) * 100
+  )
+
 md_abortion_data <- read_csv("data/md_abortion_24.csv") %>%
   rename(
     county = County,
@@ -211,47 +228,27 @@ md_abortion_data <- read_csv("data/md_abortion_24.csv") %>%
     against_votes = Against
   ) %>%
   mutate(
-    geoid = as.character(county),
-    total_abortion_votes = for_votes + against_votes,
-    abortion_pct_for = (for_votes / total_abortion_votes) * 100
+    total_votes_abortion = for_votes + against_votes,
+    against_pct = (against_votes / total_votes_abortion) * 100
   )
-
-md_pres_data <- read_csv("data/md_pres_county_24.csv") %>%
-  rename(
-    county = County,
-    trump_votes = Trump,
-    harris_votes = Harris
-  ) %>%
-  mutate(
-    geoid = as.character(county),
-    total_pres_votes = trump_votes + harris_votes,
-    trump_pct = (trump_votes / total_pres_votes) * 100
-  )
-
-md_combined_data <- md_abortion_data %>%
-  left_join(md_pres_data, by = "geoid") %>%
-  mutate(
-    pct_diff_abortion_trump = abortion_pct_for - trump_pct
-  )
-
+md_joined_data <- md_pres_data %>%
+  left_join(md_abortion_data, by = "county") %>%
+  mutate(geoid = as.character(geoid))
 md_counties <- counties(state = "MD", cb = TRUE, class = "sf")
-
 md_map_data <- md_counties %>%
-  left_join(md_combined_data, by = c("GEOID" = "geoid"))
-
+  left_join(md_joined_data, by = c("GEOID" = "geoid"))
 ggplot(md_map_data) +
-  geom_sf(aes(fill = pct_diff_abortion_trump), color = "white", size = 0.2) +
+  geom_sf(aes(fill = trump_pct - against_pct), color = "white", size = 0.2) +
   scale_fill_gradient2(
     low = "blue", high = "red", mid = "white",
-    midpoint = 0, name = "Abortion Vote - Trump % Difference"
+    midpoint = 0, name = "Trump - Against Abortion % Difference"
   ) +
   labs(
-    title = "Maryland County-Level Comparison of Abortion Vote vs. Trump Performance",
-    subtitle = "Percentage Difference by County",
-    caption = "Source: md_abortion_24.csv, md_pres_county_24.csv"
+    title = "Comparison of Trump Support vs. Opposition to Abortion by County in Maryland",
+    subtitle = "Difference in Percentage Points (Trump Support - Against Abortion)",
+    caption = "Source: md_pres_county_24.csv, md_abortion_24.csv"
   ) +
   theme_minimal()
-
 ```
 
 -30-
