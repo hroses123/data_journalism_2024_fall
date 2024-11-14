@@ -55,7 +55,7 @@ boe_table <- boe_table |>
     total = 6,
     percentage = 7
   ) |>
-  slice(-6) |> 
+  slice(-9) |> 
   mutate(
     early_voting = as.numeric(gsub(",", "", early_voting)),
     election_day = as.numeric(gsub(",", "", election_day)),
@@ -85,16 +85,30 @@ You should have 10 releases when finished, not 20.
 
 Then, write code that finds the most recent release with the word "Campaign" in the title. What election does it refer to?
 
-**A2** No campaign came up for me
+**A2** John King for Governor Campaign Cited for Authority Line Violations , Gov race
 
 ```{r}
-url2 <- "https://www.opd.state.md.us/press-releases"
-page <- read_html(url2)
+press_url <- "https://osp.maryland.gov/category/press-releases"
 
-links <- page %>%
-  html_elements('a') %>%
-  html_attr('href')
+html <- press_url |>
+  read_html()
+html
 
+extractions <- html |> #it is AHREF
+  html_elements("article a") 
+
+urls_extractions <- tibble(
+  title = extractions %>% 
+    html_attr("title"),
+  url = extractions %>% 
+    html_attr("href")) |> 
+  na.omit() |> 
+    mutate (date = mdy(title),
+            title = (gsub("Permanent Link to ","", title)),
+            title = gsub(".*:","",title))
+
+urls_extractions |> 
+  filter(str_detect(title, "Campaign")) 
 
 ```
 
