@@ -183,14 +183,14 @@ results <- pres_url |>
 
 results <- results[[1]] |>
   clean_names() |>
-  rename(harris = 2, trump = 3, oliver = 4, stein = 5, kennedy = 6) |>
+  rename(harris = 2, trump = 3, oliver = 4, stein = 5, kennedy = 6), sharon_harris = 7 |>
   slice(-25) |>
   mutate(harris = as.numeric(gsub(",","", harris))) |>
   mutate(trump = as.numeric(gsub(",","", trump))) |>
   mutate(oliver = as.numeric(gsub(",","", oliver))) |> 
   mutate(stein = as.numeric(gsub(",","", stein))) |> 
   mutate(kennedy = as.numeric(gsub(",","", kennedy))) |> 
-  select(-sharon_e_harris_write_in_democratic)
+  mutate(sharon_harris = as.numeric(gsub(",","", sharon_harris)))
 
 # show the dataframe
 results
