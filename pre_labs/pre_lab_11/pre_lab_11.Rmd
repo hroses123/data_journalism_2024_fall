@@ -174,7 +174,7 @@ Then let's use slice() to remove the last row -- row number 25 -- which contains
 **Task** Run the following code to extract the table we want, clean up the names and remove the total row. Look at the rename() function - what do you think the numbers 2 through 6 are referring to? **Answer** I think they are reffering to the column number
 
 ```{r}
-# Read in all html from table, get the HTML table.
+# Read in all _ from table, get the HTML table.
 results <- pres_url |>
   read_html() |>
   html_table()

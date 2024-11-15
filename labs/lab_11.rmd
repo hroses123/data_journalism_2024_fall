@@ -94,21 +94,26 @@ html <- press_url |>
   read_html()
 html
 
-extractions <- html |> #it is AHREF
-  html_elements("article a") 
+press_releases <- html |> #it is AHREF
+  html_elements("a") 
 
-urls_extractions <- tibble(
-  title = extractions %>% 
-    html_attr("title"),
-  url = extractions %>% 
-    html_attr("href")) |> 
-  na.omit() |> 
-    mutate (date = mdy(title),
-            title = (gsub("Permanent Link to ","", title)),
-            title = gsub(".*:","",title))
+urls <- tibble(
+  title = press_releases %>% html_attr("title"), 
+  url = press_releases %>% html_attr("href") #href here
+) |> 
+  mutate(
+    date = mdy(title), #lubridate
+    title = str_remove(title, "Permanent Link to .*?: ") #remove the extraneous info from the title, I had no clue how to do this so I looked it up on ChatGPT
+) |> 
+  drop_na() #remove NA so there are 10, not 20
 
-urls_extractions |> 
-  filter(str_detect(title, "Campaign")) 
+
+
+campaign <- urls |> 
+  filter(str_detect(title, "Campaign"))
+
+campaign
+
 
 ```
 
@@ -123,8 +128,41 @@ When you're done, rename the columns so they make sense, then make sure the date
 Finally, tell me what questions you could ask of this data, and what other information about it would be useful to have. Be creative.
 
 **A3** 
+What is the most frequent word in the titles of press releases? This is newsworthy because identifying the most frequent word in press release titles can reveal the key topics or issues being prioritized by the politican. I would need the full text of the press release titles in my dataset. 
+
+How many press releases mention a specific senator or public figure? This is newsworthy because it shows how often a senator or public figure is in the spotlight, revealing their role in current events.I’d need to identify specific senators or public figures in the titles or text of the press releases. If their names aren’t explicitly mentioned in my dataset, I might need to scrape the content of the press releases or have a list of names to search for in the text.
+
+Which months have the most press releases? This is newsworthy because it shows when a senator or public figure is most active, which highlighs when politicans are most active. I’d need the date data for each press release to group them by month.
 
 ```{r}
+url_cardin <- "https://www.cardin.senate.gov/?post_type=press-releases"
+
+html_cardin <- url_cardin |>
+  read_html()
+url_cardin
+
+cardin_dates <- html_cardin |> 
+  html_elements("h5") |> 
+  html_text() |> 
+  mdy() |> 
+  as_tibble() |> 
+  rename(date = value)
+
+cardin_titles <- html_cardin |> 
+  html_elements("h3 a") |> 
+  html_text() |> 
+  as_tibble() |> 
+  rename(title = value)
+
+cardin_urls <- html_cardin |> 
+  html_elements("h3 a") |> 
+  html_attr("href") |> 
+  as_tibble() |> 
+  rename(url = value)
+
+cardin_dates_titles_urls <- bind_cols(cardin_dates, cardin_titles, cardin_urls)
+
+cardin_dates_titles_urls
 
 ```
 
