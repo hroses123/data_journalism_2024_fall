@@ -108,7 +108,7 @@ candidate_data <- read_delim("project2/candidate_data.txt", delim = "|", col_nam
 candidate_joined_data <- inner_join(joined_data, candidate_data, by =c("candidate_id"))
 
 
-#include only these rows
+#include only these rows 
 
 final_data <- candidate_joined_data %>%
   select(
