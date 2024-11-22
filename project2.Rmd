@@ -39,7 +39,7 @@ library(tigris)
 
 
 ```{r}
-md_senate_contributions <- read_csv("data/md_senate_contributions.csv") |>
+md_senate_contributions <- read_csv("project2/md_senate_contributions.csv") |>
   
   print(column_names)
   
@@ -78,5 +78,37 @@ most_contributions <- cleaned_data |>
 
 ```{r}
 cleaned_data |>
-  write_csv("data/cleaned_md_senate_contributions.csv")
+  write_csv("project2/cleaned_md_senate_contributions.csv")
+```
+
+
+```{r}
+data <- read_delim("project2/ccl.txt", delim = "|", col_names = FALSE)
+cleaned_data_ccl <- data %>%
+  rename(
+    candidate_id = X1,
+    candidate_election_year = X2, 
+    fec_election_year = X3,
+    committee_id = X4,
+    committee_type = X5,
+    committee_design = X6, 
+    linkage_id = X7)
+
+#inner join the committee id and fec election year 
+joined_data <- inner_join(cleaned_data, cleaned_data_ccl, by = c("committee_id", "fec_election_year"))
+
+#insert the candidate data
+candidate_data <- read_delim("project2/candidate_data.txt", delim = "|", col_names = FALSE) %>%
+  select(X1, X2, X3, X5) |> 
+ rename(
+    candidate_id = X1,
+    candidate_name = X2, 
+    candidate_party = X5)
+
+candidate_joined_data <- inner_join(joined_data, candidate_data, by =c("candidate_id"))
+
+
+
+
+
 ```
