@@ -108,7 +108,31 @@ candidate_data <- read_delim("project2/candidate_data.txt", delim = "|", col_nam
 candidate_joined_data <- inner_join(joined_data, candidate_data, by =c("candidate_id"))
 
 
+#include only these rows
 
-
-
+final_data <- candidate_joined_data %>%
+  select(
+    committee_id,
+    committee_name,
+    report_year,
+    entity_type_desc,
+    contributor_prefix,
+    contributor_name,
+    contributor_first_name,
+    contributor_last_name,
+    contributor_middle_name,
+    contributor_street_1,
+    contributor_city,
+    contributor_state,
+    contributor_zip,
+    contributor_employer,
+    contributor_occupation,
+    contribution_receipt_date,
+    contribution_receipt_amount,
+    contributor_aggregate_ytd,
+    memo_text,
+    pdf_url,
+    candidate_id,
+    candidate_election_year
+  )
 ```
