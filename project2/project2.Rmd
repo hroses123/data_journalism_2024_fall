@@ -361,7 +361,7 @@ It looks like in this data, the top contributing zip codes are the same for out-
 As we keep going to answer this question, we should calculate the amount donated per person. We should consider presenting this data with two maps side-by-side. 
 
 
-###### Question 4: Among top Maryland donors, what professions donate the most money to senate campaigns? 
+###### Question 4: How can we compare two different jobs in their donations? 
 
 ```{r}
 individual_donors  <- final_data_states|>
